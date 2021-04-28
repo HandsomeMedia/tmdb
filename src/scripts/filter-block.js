@@ -1,15 +1,19 @@
 import { API_ORIGIN, API_KEY } from './config.js'
+import { dateInRange, arrayItemMatch } from './utils.js'
 
 const template = /*html*/ `
 <style>
   :host{
+    overflow-y: auto;
+  }
+
+  form{
     display: grid;
     align-items: center;
     text-align: right;
     grid-template-columns: 1fr 1fr;
     grid-auto-rows: 48px;
     gap: var(--space-md);
-    overflow-y: auto;
     background-color: rgba(0,0,0,.5);
     padding: var(--space-lg);
   }
@@ -95,26 +99,27 @@ const template = /*html*/ `
   }
 </style>
 
-<fieldset>
-  <legend>SEARCH BY TITLE</legend>
-  <input name="title" type="search" autocomplete="off">
-</fieldset>
+<form>
+  <fieldset>
+    <legend>SEARCH BY TITLE</legend>
+    <input name="title" type="search" autocomplete="off">
+  </fieldset>
 
-<fieldset name="genres">
-  <legend>FILTER BY GENRE</legend>
-</fieldset>
+  <fieldset name="genres">
+    <legend>FILTER BY GENRE</legend>
+  </fieldset>
 
-<fieldset>
-  <legend>FILTER BY RELEASE DATE</legend>
-  Before:<input name="date-before" type="date" placeholder="mm/dd/yyyy">
-  After:<input name="date-after" type="date" placeholder="mm/dd/yyyy">
-</fieldset>
+  <fieldset>
+    <legend>FILTER BY RELEASE DATE</legend>
+    After:<input name="date" type="date" placeholder="yyyy-mm-dd">
+    Before:<input name="date" type="date" placeholder="yyyy-mm-dd">
+  </fieldset>
 
-<fieldset>
-  <legend></legend>
-  <button name="submit" type="submit">SEARCH</button>
-</fieldset>
-<br>
+  <fieldset>
+    <legend></legend>
+    <button name="submit" type="submit">SEARCH</button>
+  </fieldset>
+</form>
 `
 
 const genreInput = (title, id) => /*html*/ `
@@ -130,7 +135,7 @@ class FilterBlock extends HTMLElement {
 
     this.attachShadow({ mode: 'open' })
     this.shadowRoot.innerHTML = template
-    this.searchInput = this.shadowRoot.querySelector('input[name="title"]')
+    this.form = this.shadowRoot.querySelector('form')
     this.initGenres()
     this.addEventListener('click', this)
   }
@@ -152,9 +157,47 @@ class FilterBlock extends HTMLElement {
 
     switch (target.name) {
       case 'submit':
-        e.preventDefault()
+        this.handleSubmit(e)
         break
     }
+  }
+
+  async handleSubmit(e) {
+    e.preventDefault()
+
+    // TODO: add input validation
+    const fd = new FormData(this.form)
+    const genres = fd.getAll('genre').map(str => parseInt(str))
+    const dates = fd.getAll('date')
+    const moviesByTitle = await this.getMoviesByTitle(fd.get('title'))
+    this.movies = this.filterMovies(moviesByTitle, genres, dates)
+    console.log(moviesByTitle)
+    console.log(this.movies)
+    // TODO: dispatch event
+  }
+
+  async getMoviesByTitle(title, page = 1) {
+    const response = await fetch(`${API_ORIGIN}/3/search/movie?api_key=${API_KEY}&query=${title}&page=${page}&include_adult=false`).then(response => response.json())
+    // TODO: handle response errors
+    return response.results
+  }
+
+  filterMovies(movies, genres, dates) {
+    const filterGenres = Boolean(genres.length)
+    const filterDates = dates.some(date => date)
+
+    if (!filterGenres && !filterDates) return movies
+
+    let genreMatch = true
+    let dateMatch = true
+    const filtered = movies.reduce((arr, movie) => {
+      if (filterGenres) genreMatch = arrayItemMatch(movie.genre_ids, genres)
+      if (filterDates) dateMatch = dateInRange(movie.release_date, dates)
+      if (genreMatch && dateMatch) arr.push(movie)
+      return arr
+    }, [])
+
+    return filtered
   }
 
   disconnectedCallbback() {
