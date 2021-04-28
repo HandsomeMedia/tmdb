@@ -23,5 +23,12 @@
   },
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "printWidth": 180,
+    "trailingComma": "none"
   }
 }

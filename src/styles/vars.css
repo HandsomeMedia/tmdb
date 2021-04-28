@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500&display=swap');
+
+:root {
+  --primary-font: 'Ubuntu';
+
+  --pex-blue: #071e60;
+  --medium-blue: #7090bb;
+  --dark-blue: #060810;
+  --gray: #808080;
+
+  --border-radius: 6px;
+  --space-sm: 6px;
+  --space-md: 12px;
+  --space-lg: 24px;
+}

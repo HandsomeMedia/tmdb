@@ -1,0 +1,29 @@
+@import 'vars.css';
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  vertical-align: middle;
+}
+
+body {
+  min-height: 100vh;
+  color: white;
+  font: normal 400 1rem/1.5 var(--primary-font), sans-serif;
+  background: linear-gradient(330deg, var(--dark-blue) 30%, var(--pex-blue) 100%);
+}
+
+display-block {
+  display: block;
+}
+
+filter-block {
+  position: absolute;
+  top: 0;
+  right: 0;
+  max-height: 100vh;
+}
