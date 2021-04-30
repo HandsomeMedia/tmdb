@@ -4,9 +4,11 @@
   --primary-font: 'Ubuntu';
 
   --pex-blue: #071e60;
-  --medium-blue: #7090bb;
   --dark-blue: #060810;
-  --gray: #808080;
+  --tan: #b7a28b;
+  --orange: #bf7514;
+  --gray: #666;
+  --dark-gray: #3f474c;
 
   --border-radius: 6px;
   --space-sm: 6px;

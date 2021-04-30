@@ -15,15 +15,21 @@ body {
   color: white;
   font: normal 400 1rem/1.5 var(--primary-font), sans-serif;
   background: linear-gradient(330deg, var(--dark-blue) 30%, var(--pex-blue) 100%);
+  padding: var(--space-lg);
+}
+
+h1 {
+  font-size: 2rem;
 }
 
 display-block {
   display: block;
 }
 
-filter-block {
-  position: absolute;
+filter-panel {
+  position: fixed;
   top: 0;
   right: 0;
+  height: 100%;
   max-height: 100vh;
 }
