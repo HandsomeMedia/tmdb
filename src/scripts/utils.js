@@ -12,4 +12,12 @@ function arraysHaveMatch(arr1, arr2) {
   return arr1.some(item => arr2.includes(item))
 }
 
-export { dateInRange, arraysHaveMatch }
+function formatDate(dateString) {
+  const date = new Date(dateString)
+  const locale = 'en-US'
+  const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' }
+
+  return date.toLocaleDateString(locale, dateOpts)
+}
+
+export { dateInRange, arraysHaveMatch, formatDate }

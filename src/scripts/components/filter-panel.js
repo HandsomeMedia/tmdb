@@ -45,7 +45,7 @@ const template = /*html*/ `
     height: 100%;
     margin: 0;
     padding: 0;
-    border: 2px solid var(--gray);
+    border: 2px solid var(--dark-gray);
     border-radius: var(--border-radius);
     font-family: var(--primary-font);
     font-size: 1rem;
@@ -159,6 +159,8 @@ class FilterPanel extends HTMLElement {
     }, '')
 
     this.genreFieldset.insertAdjacentHTML('beforeend', html)
+    // TODO: return genreMap from genreService and use it to populate inputs
+    this.genreMap = new Map(genres.map(i => [i.id, i.name]))
   }
 
   async handleEvent(e) {
@@ -182,14 +184,14 @@ class FilterPanel extends HTMLElement {
     const title = formData.get('title')
     const genres = formData.getAll('genre').map(str => parseInt(str))
     const dates = formData.getAll('date')
-    const response = await movieService.searchByTitle(title)
+    const { results } = await movieService.searchByTitle(title)
 
-    this.movies = response.results
+    this.movies = results
+    this.movies.forEach(movie => (movie.genre_names = movie.genre_ids.map(id => this.genreMap.get(id))))
 
     if (dates.some(date => date)) this.movies = this.filterByDate(this.movies, dates)
     if (genres.length) this.movies = this.filterByGenre(this.movies, genres)
 
-    console.log(response)
     console.log(this.movies)
     this.dispatchEvent(
       new CustomEvent('filter-update', {
