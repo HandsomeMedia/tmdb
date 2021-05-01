@@ -6,6 +6,7 @@ const movieListEl = document.querySelector('.movie-list')
 function init() {
   const filterPanel = document.createElement('filter-panel')
 
+  filterPanel.toggleAttribute('hidden', true)
   document.body.append(filterPanel)
   filterPanel.addEventListener('filter-update', renderMovies)
 }

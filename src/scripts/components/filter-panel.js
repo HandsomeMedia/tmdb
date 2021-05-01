@@ -5,27 +5,41 @@ import { dateInRange, arraysHaveMatch } from '../utils.js'
 const template = /*html*/ `
 <style>
   :host{
-    overflow-y: auto;
-    background-color: rgba(0,0,0,.5);
-    padding: var(--space-lg);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    display: block;
+    contain: layout;
+    transition: transform .3s cubic-bezier(0,0,.25,1);
+    will-change: transform;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  :host([hidden]) {
+    transition-duration: .2s;
+    transform: translateX(-100%);
   }
 
   form{
     display: grid;
     align-items: center;
-    text-align: right;
+    align-content: safe center;
     grid-template-columns: 1fr 1fr;
     grid-auto-rows: 36px;
     gap: var(--space-md);
+    padding: var(--space-lg);
+    height: 100vh;
+    text-align: right;
+    overflow-y: auto;
+    background-color: hsl(0deg 0% 10% / 80%);
+    box-sizing: border-box;
+  }
+
+  form::after{
+    content: '';
+    height: 100%;
   }
 
   fieldset{
     display: contents;
-    border: none;
-    margin: 0;
-    padding: 0;
   }
 
   legend{
@@ -36,7 +50,8 @@ const template = /*html*/ `
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    border-bottom: 4px solid var(--tan);
+    color: var(--tan);
+    border-bottom: 4px solid;
   }
 
   button,
@@ -97,6 +112,26 @@ const template = /*html*/ `
     filter: brightness(1.25);
   }
 
+  .panel-toggle-btn{
+    position: absolute;
+    top: 10%;
+    left: 100%;
+    width: 36px;
+    height: auto;
+    padding: var(--space-lg) 0;
+    color: var(--tan);
+    background-color: var(--dark-gray);
+    border: none;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    box-shadow: inset 5px 0 5px -4px #111, inset 0 0 0 2px hsl(0deg 0% 100% / 10%);
+  }
+
+  .panel-toggle-btn span{
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    pointer-events: none;
+  }
+
   ::-webkit-search-cancel-button{
     filter: brightness(3) grayscale(1);
     cursor: pointer;
@@ -129,6 +164,7 @@ const template = /*html*/ `
     <button name="submit" type="submit">SEARCH</button>
   </fieldset>
 </form>
+<button class="panel-toggle-btn" name="panel-toggle" type="button"><span>FILTER<span></button>
 `
 
 const genreInput = (title, id) => /*html*/ `
@@ -167,6 +203,10 @@ class FilterPanel extends HTMLElement {
     const target = e.composedPath()[0]
 
     switch (target.name) {
+      case 'panel-toggle':
+        this.toggleAttribute('hidden')
+        this.form.elements['title'].focus()
+        break
       case 'submit':
         this.handleSubmit(e)
         break
@@ -193,6 +233,7 @@ class FilterPanel extends HTMLElement {
     if (genres.length) this.movies = this.filterByGenre(this.movies, genres)
 
     console.log(this.movies)
+    this.toggleAttribute('hidden', true)
     this.dispatchEvent(
       new CustomEvent('filter-update', {
         detail: this.movies
