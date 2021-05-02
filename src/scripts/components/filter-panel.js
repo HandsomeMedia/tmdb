@@ -13,13 +13,13 @@ const template = /*html*/ `
   :host{
     display: block;
     contain: layout;
-    transition: transform .3s cubic-bezier(0,0,.25,1);
+    transition: transform .4s cubic-bezier(.4,0,.25,1);
     will-change: transform;
     background-color: hsl(0deg 0% 10%);
   }
 
   :host([hidden]) {
-    transition-duration: .2s;
+    transition-duration: .3s;
     transform: translateX(-100%);
   }
 
@@ -123,7 +123,7 @@ const template = /*html*/ `
 
   .panel-toggle-btn{
     position: absolute;
-    top: 10%;
+    top: 160px;
     left: 100%;
     width: 36px;
     height: auto;
@@ -155,7 +155,7 @@ const template = /*html*/ `
 <form>
   <fieldset>
     <legend>SEARCH MOVIES</legend>
-    <input name="title" type="search" autocomplete="off" required>
+    <input name="title" type="search" autocomplete="off" required autofocus>
   </fieldset>
 
   <fieldset>
@@ -193,6 +193,7 @@ class FilterPanel extends HTMLElement {
     this.genreFieldset = this.shadowRoot.querySelector('[name="genres"]')
     this.populateGenreFieldset()
     this.addEventListener('click', this)
+    setTimeout(() => this.removeAttribute('hidden'), 500)
   }
 
   async populateGenreFieldset() {

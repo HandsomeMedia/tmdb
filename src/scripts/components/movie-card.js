@@ -28,12 +28,12 @@ const template = data => /*html*/ `
     flex: 1;
     padding: var(--space-md);
     border-bottom: 6px solid var(--dark-gray);
+    line-height: 1.4;
   }
 
   .title{
     font-size: var(--h3-size);
     font-weight: normal;
-    line-height: 1.2;
     margin-bottom: var(--space-sm);
     text-transform: uppercase;
     display: -webkit-box;
