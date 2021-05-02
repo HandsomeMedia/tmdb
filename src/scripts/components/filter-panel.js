@@ -1,5 +1,4 @@
 import { movieService } from '../services/movie.service.js'
-import { genreService } from '../services/genre.service.js'
 import { dateInRange, arraysHaveMatch } from '../utils.js'
 
 const template = /*html*/ `
@@ -192,7 +191,7 @@ class FilterPanel extends HTMLElement {
   async initGenres() {
     let html = ''
 
-    this.genreMap = await genreService.getMap()
+    this.genreMap = await movieService.getGenreMap()
     this.genreMap.forEach((name, id) => {
       html += /*html*/ `
       <label>
@@ -219,22 +218,24 @@ class FilterPanel extends HTMLElement {
   }
 
   async handleSubmit(e) {
-    // TODO: allow search by genre and date without requiring title
+    // TODO: Add validation
     e.preventDefault()
-
-    // TODO: add better input validation
-    if (!this.form.reportValidity()) return
 
     const formData = new FormData(this.form)
     const title = formData.get('title')
     const genres = formData.getAll('genre').map(str => parseInt(str))
     const dates = formData.getAll('date')
 
-    this.movies = await movieService.searchByTitle(title)
-    this.movies.forEach(movie => (movie.genre_names = movie.genre_ids.map(id => this.genreMap.get(id))))
-
-    if (dates.some(date => date)) this.movies = this.filterByDate(this.movies, dates)
-    if (genres.length) this.movies = this.filterByGenre(this.movies, genres)
+    // TMDB API doesn't allow combined query with filters
+    // if query provided, fetch by title and filter genre/dates from results on client-side
+    // if no query provided, fetch by genre/dates
+    if (title) {
+      this.movies = await movieService.searchByTitle(title)
+      if (dates.some(date => date)) this.movies = this.filterByDate(this.movies, dates)
+      if (genres.length) this.movies = this.filterByGenre(this.movies, genres)
+    } else {
+      this.movies = await movieService.searchByFilters(genres, dates)
+    }
 
     this.setAttribute('hidden', '')
     this.dispatchEvent(
