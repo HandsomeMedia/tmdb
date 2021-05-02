@@ -2,56 +2,80 @@ import { formatDate } from '../utils.js'
 
 const template = data => /*html*/ `
 <style>
+  *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
   :host{
-    display: block;
+    display: flex;
+    height: 138px;
+    background: linear-gradient(45deg, black 0%, var(--dark-blue) 100%);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    animation: fade-in .5s var(--delay) ease-out both;
+    overflow: hidden;
+  }
+
+  .poster{
+    width: 92px;
+    height: 100%;
+    background-color: var(--light-gray);
+    object-fit: cover;
   }
 
   article{
-    display: inline-grid;
-    gap: var(--space-sm) var(--space-md);
-    grid-template-rows: auto auto auto;
-    grid-template-columns: auto 1fr;
-    width: min(480px, 100%);
-    padding-right: var(--space-md);
-    background-color: rgba(0,0,0,.5);
-    border-radius: var(--border-radius);
-    overflow: hidden;  }
-
-  .poster{
-    background-color: #dfd8d0;
-    grid-row: span 3;
+    flex: 1;
+    padding: var(--space-md);
+    border-bottom: 6px solid var(--dark-gray);
   }
 
   .title{
-    font-size: 1rem;
-    margin: var(--space-md) 0 0;
+    font-size: var(--h3-size);
+    font-weight: normal;
+    line-height: 1.2;
+    margin-bottom: var(--space-sm);
     text-transform: uppercase;
-  }
-
-  .details{
-    font-size: .75rem;
-    color: var(--gray);
-  }
-
-  .description{
-    font-size: .875rem;
-    color: var(--light-gray);
-    margin: 0 0 var(--space-sm);
-    line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  .release-date,
+  .genres{
+    font-size: .75rem;
+    color: var(--gray);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .genres li{
+    display: inline-block;
+  }
+
+  .genres li + li::before {
+    content: ', ';
+  }
+
+  @keyframes fade-in{
+    from{
+      opacity: 0;
+    }
+    to{
+      opacity: 1;
+    }
+  }
 </style>
 
+<figure>
+  <img class="poster" src="https://image.tmdb.org/t/p/w92${data.poster_path}" width="92" height="138" loading="lazy" title="${data.title}" alt="Poster image of ${data.title}">
+</figure>
 <article>
-  <img class="poster" src="https://image.tmdb.org/t/p/w92${data.poster_path}" width="92" height="138">
   <h3 class="title">${data.title}</h3>
-  <div class="details">
-    <time datetime="${data.release_date}">${formatDate(data.release_date)}</time> &nbsp;|&nbsp; <span>${data.genre_names.join(', ')}</span>
-  </div>
-  <p class="description">${data.overview}</p>
+  <time class="release-date" datetime="${data.release_date}">${formatDate(data.release_date)}</time>
+  <ul class="genres">${data.genre_names.map(name => `<li>${name}</li>`).join('')}</ul>
 </article>
 `
 
@@ -59,7 +83,9 @@ class MovieCard extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' })
     this.shadowRoot.innerHTML = template(this.data)
-    this.shadowRoot.querySelector('.poster').addEventListener('error', this)
+    this.style.setProperty('--delay', `${this.num / 60}s`)
+    this.poster = this.shadowRoot.querySelector('.poster')
+    this.poster.addEventListener('error', this)
   }
 
   handleEvent(e) {
@@ -72,7 +98,9 @@ class MovieCard extends HTMLElement {
     }
   }
 
-  disconnectedCallbback() {}
+  disconnectedCallbback() {
+    this.poster.removeEventListener('error', this)
+  }
 }
 
 customElements.define('movie-card', MovieCard)

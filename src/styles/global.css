@@ -13,21 +13,21 @@ body {
   min-height: 100vh;
   color: white;
   font: normal 400 1rem/1.5 var(--primary-font), sans-serif;
-  background: linear-gradient(330deg, var(--dark-blue) 30%, var(--pex-blue) 100%);
+  background: linear-gradient(330deg, black 30%, var(--pex-blue) 100%);
   padding: var(--space-lg);
   margin: 0;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: var(--h1-size);
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: var(--h2-size);
 }
 
 h3 {
-  font-size: 1.25rem;
+  font-size: var(--h3-size);
   font-weight: normal;
 }
 
@@ -44,10 +44,10 @@ filter-panel {
 }
 
 .movie-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  margin: 0;
   list-style: none;
-  padding: var(--space-lg) 0;
-}
-
-.movie-list > * + * {
-  margin-top: var(--space-lg);
 }
