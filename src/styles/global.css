@@ -73,11 +73,3 @@ filter-panel {
   height: 100%;
   max-height: 100vh;
 }
-
-.movie-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: var(--space-lg);
-  padding: var(--space-lg) 0;
-  list-style: none;
-}
