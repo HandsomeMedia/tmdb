@@ -27,7 +27,7 @@ const template = /*html*/ `
     :host{
       -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
-      background-color: hsl(0deg 0% 10% / 80%);
+      background-color: hsl(0deg 0% 10% / 75%);
     }
   }
 
@@ -176,13 +176,6 @@ const template = /*html*/ `
 <button class="panel-toggle-btn" name="panel-toggle" type="button"><span>FILTER<span></button>
 `
 
-const genreInput = (title, id) => /*html*/ `
-  <label>
-    <input name="genre" type="checkbox" value="${id}">
-    <span>${title}</span>
-  </label>
-`
-
 class FilterPanel extends HTMLElement {
   constructor() {
     super()
@@ -191,22 +184,24 @@ class FilterPanel extends HTMLElement {
     this.shadowRoot.innerHTML = template
     this.form = this.shadowRoot.querySelector('form')
     this.genreFieldset = this.shadowRoot.querySelector('[name="genres"]')
-    this.populateGenreFieldset()
+
+    this.initGenres()
     this.addEventListener('click', this)
-    setTimeout(() => this.removeAttribute('hidden'), 500)
   }
 
-  async populateGenreFieldset() {
-    // TODO: add loading indicator
-    const { genres } = await genreService.list()
-    const html = genres.reduce((acc, cur) => {
-      acc += genreInput(cur.name, cur.id)
-      return acc
-    }, '')
+  async initGenres() {
+    let html = ''
 
+    this.genreMap = await genreService.getMap()
+    this.genreMap.forEach((name, id) => {
+      html += /*html*/ `
+      <label>
+        <input name="genre" type="checkbox" value="${id}">
+        <span>${name}</span>
+      </label>
+      `
+    })
     this.genreFieldset.insertAdjacentHTML('beforeend', html)
-    // TODO: return genreMap from genreService and use it to populate inputs
-    this.genreMap = new Map(genres.map(i => [i.id, i.name]))
   }
 
   async handleEvent(e) {
@@ -234,23 +229,19 @@ class FilterPanel extends HTMLElement {
     const title = formData.get('title')
     const genres = formData.getAll('genre').map(str => parseInt(str))
     const dates = formData.getAll('date')
-    const { results } = await movieService.searchByTitle(title)
 
-    this.movies = results
+    this.movies = await movieService.searchByTitle(title)
     this.movies.forEach(movie => (movie.genre_names = movie.genre_ids.map(id => this.genreMap.get(id))))
 
     if (dates.some(date => date)) this.movies = this.filterByDate(this.movies, dates)
     if (genres.length) this.movies = this.filterByGenre(this.movies, genres)
 
-    console.log(this.movies)
-    this.toggleAttribute('hidden', true)
+    this.setAttribute('hidden', '')
     this.dispatchEvent(
       new CustomEvent('filter-update', {
         detail: this.movies
       })
     )
-
-    return this.movies
   }
 
   filterByDate(movies, dates) {

@@ -6,6 +6,7 @@ const filterPanel = document.querySelector('filter-panel')
 
 function init() {
   filterPanel.addEventListener('filter-update', handleMovieData)
+  setTimeout(() => filterPanel.removeAttribute('hidden'), 500)
 }
 
 function handleMovieData(e) {
