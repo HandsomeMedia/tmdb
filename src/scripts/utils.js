@@ -1,9 +1,9 @@
 function dateInRange(target, range) {
   const targetDate = new Date(target)
-  const startDate = range[0] ? new Date(range[0]) : new Date(1888, 0)
+  const startDate = range[0] ? new Date(range[0]) : new Date(1800, 0)
   const endDate = range[1] ? new Date(range[1]) : Date.now()
 
-  if (startDate < targetDate && targetDate < endDate) return true
+  if (startDate <= targetDate && targetDate <= endDate) return true
 
   return false
 }
