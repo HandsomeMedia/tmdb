@@ -151,8 +151,8 @@ const template = /*html*/ `
 
   <fieldset>
     <legend>FILTER BY RELEASE DATE</legend>
-    After:<input name="date" type="date" placeholder="yyyy-mm-dd">
-    Before:<input name="date" type="date" placeholder="yyyy-mm-dd">
+    After:<input name="date" type="date" placeholder="yyyy-mm-dd" value="1900-01-01">
+    Before:<input name="date" type="date" placeholder="yyyy-mm-dd" value="${new Date().toISOString().split('T')[0]}">
   </fieldset>
 
   <fieldset name="genres">
