@@ -4,6 +4,12 @@ import { dateInRange, arraysHaveMatch } from '../utils.js'
 
 const template = /*html*/ `
 <style>
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   :host{
     display: block;
     contain: layout;
@@ -36,8 +42,7 @@ const template = /*html*/ `
     height: 100vh;
     text-align: right;
     overflow-y: auto;
-    background-color: hsl(0deg 0% 10% / 80%);
-    box-sizing: border-box;
+    border-right: 1px solid #333;
   }
 
   form::after{
@@ -52,21 +57,18 @@ const template = /*html*/ `
   legend{
     grid-column: span 2;
     height: 100%;
-    margin: 0;
-    padding: 0;
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    text-align: center;
     color: var(--tan);
-    border-bottom: 4px solid;
+    border-bottom: 6px solid var(--dark-gray);
   }
 
   button,
   input,
   label{
     height: 100%;
-    margin: 0;
-    padding: 0;
     border: 2px solid var(--dark-gray);
     border-radius: var(--border-radius);
     font-family: var(--primary-font);
@@ -152,7 +154,7 @@ const template = /*html*/ `
 
 <form>
   <fieldset>
-    <legend>SEARCH BY TITLE</legend>
+    <legend>SEARCH MOVIES</legend>
     <input name="title" type="search" autocomplete="off" required>
   </fieldset>
 
