@@ -9,13 +9,20 @@ const template = /*html*/ `
     contain: layout;
     transition: transform .3s cubic-bezier(0,0,.25,1);
     will-change: transform;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    background-color: hsl(0deg 0% 10%);
   }
 
   :host([hidden]) {
     transition-duration: .2s;
     transform: translateX(-100%);
+  }
+
+  @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+    :host{
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      background-color: hsl(0deg 0% 10% / 80%);
+    }
   }
 
   form{
