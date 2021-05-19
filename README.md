@@ -1,5 +1,6 @@
 # Movie Database
-Tests API search and filter functionality.  Uses the API provided by TMDB (https://www.themoviedb.org/).
+Tests API search and filter functionality using API provided by TMDB (https://www.themoviedb.org/).
+App demo: https://handsomemedia.github.io/tmdb/src/
 
 ## Notes
 - The TMDB API doesn't allow query combined with advanced filtering (https://developers.themoviedb.org/3/search/search-movies).  Consequently, when a query is combined with filters, this app filters from the response set on client-side.  If filters are provided without query, this app fetches those results directly using separate endpoint.
