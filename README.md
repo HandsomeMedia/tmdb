@@ -1,5 +1,6 @@
 # Movie Database
 Tests API search and filter functionality using API provided by TMDB (https://www.themoviedb.org/).
+
 App demo: https://handsomemedia.github.io/tmdb/src/
 
 ## Notes
